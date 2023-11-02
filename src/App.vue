@@ -4,7 +4,8 @@ import axios from "axios";
 export default { components: { HomeBnb } };
 </script>
 <template>
-  <HomeBnb />
+  <!-- <HomeBnb /> -->
+  <router-view> </router-view>
 </template>
 <style lang="scss">
 @use "./style/general.scss";
