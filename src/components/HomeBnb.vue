@@ -9,8 +9,11 @@
       <li><strong>Numero di Bagni: </strong>{{ appartment.bathrooms }}</li>
       <li><strong>Metri Quadri: </strong>{{ appartment.mq }}</li>
 
-      <li v-if="appartment.photo && appartment.photo.length > 0">
-        <strong>Foto: </strong><img :src="appartment.photo[0].path" alt="" />
+      <li v-if="appartment.photos && appartment.photos.length > 0">
+        <strong>Foto: </strong>
+        <ul>
+          <li>{{ appartment.photos[0].photo }}</li>
+        </ul>
       </li>
       <li v-else>
         <strong>Foto: </strong><img src="https://picsum.photos/200/300" alt="" />
@@ -18,6 +21,7 @@
     </ul>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";
