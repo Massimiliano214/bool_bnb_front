@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>ciao</h1>
     <ul v-for="appartment in appartments" :key="appartment.id">
       <li><strong>Nome appartamento: </strong>{{ appartment.name }}</li>
       <li><strong>Indirizzo: </strong>{{ appartment.address }}</li>
