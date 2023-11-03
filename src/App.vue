@@ -1,10 +1,5 @@
-<script>
-import HomeBnb from "./components/HomeBnb.vue";
-import axios from "axios";
-export default { components: { HomeBnb } };
-</script>
+<script></script>
 <template>
-  <!-- <HomeBnb /> -->
   <router-view> </router-view>
 </template>
 <style lang="scss">

@@ -10,11 +10,6 @@ const router = createRouter({
       name: "home",
       component: AppHome,
     },
-    {
-      path: "/prova",
-      name: "prova",
-      component: AppProva,
-    },
   ],
 });
 
