@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>ciao</h1>
-    <ul v-for="appartment in appartments">
+    <ul v-for="appartment in appartments" :key="appartment.id">
       <li><strong>Nome appartamento: </strong>{{ appartment.name }}</li>
       <li><strong>Indirizzo: </strong>{{ appartment.address }}</li>
       <li><strong>Numero di Camere: </strong>{{ appartment.rooms }}</li>
@@ -9,20 +9,16 @@
       <li><strong>Numero di Bagni: </strong>{{ appartment.bathrooms }}</li>
       <li><strong>Metri Quadri: </strong>{{ appartment.mq }}</li>
 
-      <li v-if="appartment.photos">
-        <strong>Foto: </strong><img src="{{ appartment.photos[0] }}" alt="" />
+      <li v-if="appartment.photo && appartment.photo.length > 0">
+        <strong>Foto: </strong><img :src="appartment.photo[0].path" alt="" />
       </li>
       <li v-else>
-        <strong>Foto: </strong
-        ><img
-          src="https://picsum.photos/200/300
- "
-          alt=""
-        />{{ appartment.photos[0] }}
+        <strong>Foto: </strong><img src="https://picsum.photos/200/300" alt="" />
       </li>
     </ul>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 
