@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     fechAppartments() {
-      axios.get("http://127.0.0.1:8000/api/appartments").then((response) => {
+      axios.get("http://127.0.0.1:8000/api/appartments?only_sponsored=true").then((response) => {
         this.appartments = response.data;
         console.log(this.appartments);
       });
