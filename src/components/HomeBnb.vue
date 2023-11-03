@@ -11,6 +11,7 @@
       <li v-if="appartment.photos && appartment.photos.length > 0">
         <strong>Foto: </strong>
         <img
+          class="cover"
           :src="`http://127.0.0.1:8000/storage/${appartment.photos[0].path}`"
           alt=""
         />
@@ -51,4 +52,8 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.cover {
+  width: 200px;
+}
+</style>
