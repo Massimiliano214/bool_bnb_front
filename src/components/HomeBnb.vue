@@ -1,25 +1,47 @@
 <template>
-  <div>
-    <ul v-for="appartment in appartments" :key="appartment.id">
-      <li><strong>Nome appartamento: </strong>{{ appartment.name }}</li>
-      <li><strong>Indirizzo: </strong>{{ appartment.address }}</li>
-      <li><strong>Numero di Camere: </strong>{{ appartment.rooms }}</li>
-      <li><strong>Numero di Letti: </strong>{{ appartment.beds }}</li>
-      <li><strong>Numero di Bagni: </strong>{{ appartment.bathrooms }}</li>
-      <li><strong>Metri Quadri: </strong>{{ appartment.mq }}</li>
-      <li v-if="appartment.photos && appartment.photos.length > 0">
-        <strong>Foto: </strong>
-        <img
-          class="cover"
-          :src="`http://127.0.0.1:8000/storage/${appartment.photos[0].path}`"
-          alt=""
-        />
-      </li>
-      <li v-else>
-        <strong>Foto: </strong
-        ><img src="https://picsum.photos/200/300" alt="" />
-      </li>
-    </ul>
+  <div class="container">
+    <div class="row">
+      <div
+        class="col-12"
+        v-for="appartment in appartments"
+        :key="appartment.id"
+      >
+        <div class="card">
+          <div class="card-header">
+            <h3>{{ appartment.name }}</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 me-3">
+                <div v-if="appartment.photos && appartment.photos.length > 0">
+                  <img
+                    class="cover"
+                    :src="`http://127.0.0.1:8000/storage/${appartment.photos[0].path}`"
+                    alt=""
+                  />
+                </div>
+                <div v-else>
+                  <img src="https://picsum.photos/200/300" alt="" />
+                </div>
+              </div>
+              <div class="col-md-4 d-flex align-items-center ml-3">
+                <div>
+                  <p><strong>Indirizzo:</strong> {{ appartment.address }}</p>
+                  <p>
+                    <strong>Numero di Camere:</strong> {{ appartment.rooms }}
+                  </p>
+                  <p><strong>Numero di Letti:</strong> {{ appartment.beds }}</p>
+                  <p>
+                    <strong>Numero di Bagni:</strong> {{ appartment.bathrooms }}
+                  </p>
+                  <p><strong>Metri Quadri:</strong> {{ appartment.mq }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -51,8 +73,17 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
+.card {
+  margin-bottom: 20px;
+}
+
 .cover {
-  width: 200px;
+  width: 100%;
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 </style>
