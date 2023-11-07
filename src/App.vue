@@ -1,9 +1,58 @@
-<script></script>
 <template>
-  <a href="http://127.0.0.1:8000/"><h2>BACK-OFFICE</h2></a>
-  <h2></h2>
+  <div class="container-fluid"></div>
+  <nav class="d-flex justify-content-end">
+    <router-link v-if="$route.name !== 'home'" :to="{ name: 'home' }">
+      <h4>HOME</h4>
+    </router-link>
+    <p v-if="$route.name !== 'home'" ><h3>|</h3></p>
+    <router-link v-if="$route.name !== 'home'" :to="{ name: 'home' }">
+      <h4>CONTATTACI</h4>
+    </router-link>
+    <p><h3>|</h3></p>
+    <a href="http://127.0.0.1:8000/"><h4>BACK-OFFICE</h4></a>
+  </nav>
   <router-view> </router-view>
 </template>
+
+<script></script>
+
 <style lang="scss">
 @use "./style/general.scss";
+nav {
+  margin: 15px 15px;
+  a {
+    text-decoration: none;
+    color: black;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+      color: blue;
+      transform: scale(1.1);
+      ::before {
+        content: "_____";
+        color:red;
+        transform: scale(1.1);
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 10px;
+      
+        animation: lineAnimation 0.5s ease-in-out; 
+      }
+    }
+  }
+  p {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  @keyframes lineAnimation {
+    0% {
+      width: 0;
+    }
+    100% {
+      width: 100px;
+    }
+  }
+}
 </style>

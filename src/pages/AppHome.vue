@@ -8,7 +8,7 @@ export default {
 };
 </script>
 <template>
-  <h1>HomePage</h1>
+  <h1>APPARTAMENTI SPONSORIZZATI</h1>
   <HomeBnb />
 </template>
 <style lang="scss"></style>

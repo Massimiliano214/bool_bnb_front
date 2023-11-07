@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AppHome from "./pages/AppHome.vue";
-import AppProva from "./pages/AppProva.vue";
+import AppShow from "./pages/AppShow.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -9,6 +9,12 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: AppHome,
+    },
+    {
+      path: "/:id",
+      name: "home.show",
+      component: AppShow,
+      props: true,
     },
   ],
 });
