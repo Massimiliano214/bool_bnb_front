@@ -162,6 +162,9 @@
                       <strong>Email:</strong>
                       {{ appartment.user.email }}
                     </p>
+                    <button>
+                      <p class="card-text info">RICHIEDI INFORMAZIONI</p>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -228,6 +231,26 @@ export default {
     align-items: center;
     width: 300px;
     height: 300px;
+  }
+}
+button {
+  display: flex;
+  margin: 50px auto 5px auto;
+  border-radius: 25px;
+  line-height: 3rem;
+  padding: 0 10px;
+  border: none;
+  color: red;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    transform: scale(1.1);
+    color: blue;
+  }
+  .info {
+    font-weight: bolder;
+    font-size: 1.5rem;
+    text-align: center;
   }
 }
 </style>

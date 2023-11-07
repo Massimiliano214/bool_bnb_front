@@ -1,44 +1,39 @@
 <template>
-  <div class="container">
+  <div class="container mt-5">
     <div class="row">
       <div
-        class="col-12"
+        :class="['col-12', 'col-md-6', 'd-flex', 'align-items-center', 'mb-3']"
         v-for="appartment in appartments"
         :key="appartment.id"
         @click="goToShowPage(appartment.id)"
         style="cursor: pointer"
       >
-        <div class="card">
+        <div class="card h-100 flex-grow-1">
           <div class="card-header">
             <h3>{{ appartment.name }}</h3>
           </div>
-          <div class="card-body">
-            <div>
+          <div class="card-body d-flex align-items-center">
+            <div class="me-3">
               <div v-if="appartment.photos && appartment.photos.length > 0">
                 <img
-                  class="cover"
+                  class="cover w-100"
                   :src="`http://127.0.0.1:8000/storage/${appartment.photos[0].path}`"
                   alt=""
                 />
               </div>
               <div v-else>
-                <img src="https://picsum.photos/200/300" alt="" />
+                <img
+                  src="https://picsum.photos/200/300"
+                  alt=""
+                  class="cover w-100"
+                />
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-4 d-flex align-items-center ml-3">
-                <div>
-                  <p><strong>Indirizzo:</strong> {{ appartment.address }}</p>
-                  <p>
-                    <strong>Numero di Camere:</strong> {{ appartment.rooms }}
-                  </p>
-                  <!-- <p><strong>Numero di Letti:</strong> {{ appartment.beds }}</p>
-                  <p>
-                    <strong>Numero di Bagni:</strong> {{ appartment.bathrooms }}
-                  </p> -->
-                  <p><strong>Metri Quadri:</strong> {{ appartment.mq }}</p>
-                </div>
-              </div>
+            <div class="ml-3">
+              <p><strong>Indirizzo:</strong> {{ appartment.address }}</p>
+              <p><strong>Numero di Camere:</strong> {{ appartment.rooms }}</p>
+              <!-- Aggiungi altri dettagli del testo qui... -->
+              <p><strong>Metri Quadri:</strong> {{ appartment.mq }}</p>
             </div>
           </div>
         </div>
