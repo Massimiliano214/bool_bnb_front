@@ -6,19 +6,40 @@
           <div class="card-header">
             <h3>Dettagli dell'Appartamento : {{ appartment.name }}</h3>
           </div>
+          <!-- immagini appartamento -->
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="image-container text-center">
+                <template
+                  v-if="appartment.photos && appartment.photos.length > 0"
+                >
+                  <a
+                    v-for="(photo, index) in appartment.photos"
+                    :key="index"
+                    :href="`http://127.0.0.1:8000/storage/${photo.path}`"
+                    class="image-link"
+                  >
+                    <img
+                      class="cover"
+                      :src="`http://127.0.0.1:8000/storage/${photo.path}`"
+                      alt="Photo"
+                    />
+                  </a>
+                </template>
+                <template v-else>
+                  <div class="image-link">
+                    <img
+                      src="https://picsum.photos/200/200"
+                      alt="Default Image"
+                      class="cover"
+                    />
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+          <!-- card -->
           <div class="card-body">
-            <!-- immagini appartamento -->
-            <div v-if="appartment.photos && appartment.photos.length > 0">
-              <img
-                class="cover"
-                :src="`http://127.0.0.1:8000/storage/${appartment.photos[0].path}`"
-                alt=""
-              />
-            </div>
-            <div v-else>
-              <img src="https://picsum.photos/200/300" alt="" />
-            </div>
-
             <div class="row mt-3 d-flex align-items-stretch">
               <!-- dettagli appartamento -->
               <div class="col-12 col-md-6 col-lg-4 flex-fill">
@@ -31,6 +52,47 @@
                     </h4>
                   </div>
                   <div class="card-body">
+                    <div v-if="appartment.created_at !== appartment.updated_at">
+                      <p class="card-text">
+                        <strong>Caricato il:</strong>
+                        {{
+                          new Date(appartment.created_at).toLocaleDateString(
+                            "it-IT",
+                            {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                            }
+                          )
+                        }}
+                      </p>
+                      <p>
+                        <strong>Aggiornato il:</strong>
+                        {{
+                          new Date(appartment.updated_at).toLocaleDateString(
+                            "it-IT",
+                            {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                            }
+                          )
+                        }}
+                      </p>
+                    </div>
+                    <p v-else class="card-text">
+                      <strong>Caricato il:</strong>
+                      {{
+                        new Date(appartment.created_at).toLocaleDateString(
+                          "it-IT",
+                          {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          }
+                        )
+                      }}
+                    </p>
                     <p class="card-text">
                       <strong>Dimensioni:</strong> {{ appartment.mq }} mq
                     </p>
@@ -78,7 +140,11 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-md-6 col-lg-4 flex-fill">
+              <!-- Info di contatto -->
+              <div
+                class="col-12 col-md-6 col-lg-4 flex-fill"
+                v-if="appartment.user"
+              >
                 <div class="card h-100">
                   <div class="card-header">
                     <h4
@@ -89,11 +155,18 @@
                   </div>
                   <div class="card-body">
                     <p class="card-text">
-                      <strong>Dimensioni:</strong>
-                      {{ appartment.user }} mq
+                      <strong>Proprietario:</strong>
+                      {{ appartment.user.name }} {{ appartment.user.lastname }}
+                    </p>
+                    <p class="card-text">
+                      <strong>Email:</strong>
+                      {{ appartment.user.email }}
                     </p>
                   </div>
                 </div>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4 flex-fill" v-else>
+                <p>Informazioni sull'utente non disponibili.</p>
               </div>
             </div>
           </div>
@@ -113,6 +186,7 @@ export default {
       appartment: {},
     };
   },
+  // props: ["user"],
   methods: {
     fetchAppartment() {
       const id = this.$route.params.id;
@@ -132,15 +206,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card {
-  margin-bottom: 20px;
-}
-
-.cover {
-  width: 100%;
-  max-width: 300px;
-  max-height: 300px;
-  border-radius: 5px;
-  margin-top: 10px;
+.image-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  img {
+    width: 300px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    object-position: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+  .image-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 300px;
+  }
 }
 </style>

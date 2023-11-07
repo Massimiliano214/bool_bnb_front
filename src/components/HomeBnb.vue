@@ -69,8 +69,8 @@ export default {
           console.log(this.appartments);
         });
     },
-    goToShowPage(id) {
-      this.$router.push({ name: "home.show", params: { id } });
+    goToShowPage(id, userId) {
+      this.$router.push({ name: "home.show", params: { id, user_id: userId } });
     },
   },
   mounted() {

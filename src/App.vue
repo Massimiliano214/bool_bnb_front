@@ -4,7 +4,7 @@
     <router-link v-if="$route.name !== 'home'" :to="{ name: 'home' }">
       <h4>HOME</h4>
     </router-link>
-    <p v-if="$route.name !== 'home'" ><h3>|</h3></p>
+<p v-if="$route.name !== 'home'" ><h3>|</h3></p>
     <router-link v-if="$route.name !== 'home'" :to="{ name: 'home' }">
       <h4>CONTATTACI</h4>
     </router-link>
@@ -12,6 +12,19 @@
     <a href="http://127.0.0.1:8000/"><h4>BACK-OFFICE</h4></a>
   </nav>
   <router-view> </router-view>
+  <footer>
+    <nav class="d-flex justify-content-center">
+    <router-link v-if="$route.name !== 'home'" :to="{ name: 'home' }">
+      <h4>HOME</h4>
+    </router-link>
+<p v-if="$route.name !== 'home'" ><h3>|</h3></p>
+    <router-link v-if="$route.name !== 'home'" :to="{ name: 'home' }">
+      <h4>CONTATTACI</h4>
+    </router-link>
+    <p><h3>|</h3></p>
+    <a href="http://127.0.0.1:8000/"><h4>BACK-OFFICE</h4></a>
+  </nav>
+  </footer>
 </template>
 
 <script></script>
@@ -26,7 +39,7 @@ nav {
     position: relative;
     transition: all 0.3s ease-in-out;
     &:hover {
-      color: blue;
+      color: rgb(122, 122, 199);
       transform: scale(1.1);
       ::before {
         content: "_____";
@@ -54,5 +67,14 @@ nav {
       width: 100px;
     }
   }
+}
+footer {
+  margin-top: auto;
+background-color: black;
+color: antiquewhite;
+padding: 15px;
+a{
+  color: antiquewhite;
+}
 }
 </style>
