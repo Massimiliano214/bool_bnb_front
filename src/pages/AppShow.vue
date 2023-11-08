@@ -162,9 +162,9 @@
                       <strong>Email:</strong>
                       {{ appartment.user.email }}
                     </p>
-                    <button>
+                    <router-link :to="{ name: 'home.message' }">
                       <p class="card-text info">RICHIEDI INFORMAZIONI</p>
-                    </button>
+                    </router-link>
                   </div>
                 </div>
               </div>
