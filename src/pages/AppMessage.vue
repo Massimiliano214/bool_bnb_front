@@ -43,15 +43,18 @@
         <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
 
         <label for="text">Messaggio</label>
-        <textarea
+        <textarea required  @keyup="checkText"
           v-model="formData.text"
           name="text"
           id="text"
           cols="30"
-          rows="20"
+          rows="10"
           style="resize: none"
           :class="{ error: errors.message }"
         ></textarea>
+        <div id="my_text" class="invisible text-danger"><p>Il messaggio deve avere almeno 5 caratteri;</p>
+            <p>Il messaggio deve avere al massimo 3000 caratteri;</p>
+        </div>
         <div v-if="errors.message" class="error-message">
           {{ errors.message }}
         </div>
@@ -86,7 +89,6 @@ export default {
   },
 
   methods: {
-    // ... Altri metodi ...
 
     fetchAppartment() {
       const id = this.$route.params.id;
@@ -119,6 +121,14 @@ export default {
           }
         });
     },
+    checkText() {
+        const text = document.getElementById("my_text");
+        if (this.formData.text.length <= 5) {
+            text.classList.remove("invisible");
+        } else {
+        text.classList.add("invisible");
+    }
+    }
   },
   mounted() {
     this.fetchAppartment();
@@ -131,7 +141,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  
+  overflow-y: hidden;
 }
 
 .card {
