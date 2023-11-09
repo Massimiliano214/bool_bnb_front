@@ -189,7 +189,7 @@ export default {
       appartment: {},
     };
   },
-  // props: ["user"],
+
   methods: {
     fetchAppartment() {
       const id = this.$route.params.id;

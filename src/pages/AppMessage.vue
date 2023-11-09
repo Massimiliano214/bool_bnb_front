@@ -1,33 +1,189 @@
-<script>
-    export default {
-        name: 'AppMessage',
-        data() {
-            return {
-
-            };
-        },
-        methods: {
-            
-        }
-    }
-
-</script>
-
 <template>
-    <h1>ciao</h1>
-    <form action="" method="POST">
+  <div class="centered">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="text-uppercase">
+          invia messaggio per l'appartamento <br />
+          <span class="text-danger text-uppercase fw-bolder">{{
+            appartment.name
+          }}</span>
+        </h2>
+      </div>
+      <form @submit.prevent="handleSubmit">
         <label for="name">Nome</label>
-        <input type="text" id="name">
+        <input
+          v-model="formData.name"
+          type="text"
+          name="name"
+          :class="{ error: errors.name }"
+          required
+        />
+        <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
+
         <label for="surname">Cognome</label>
-        <input type="text" id="surname">
+        <input
+          v-model="formData.lastname"
+          type="text"
+          name="lastname"
+          :class="{ error: errors.lastname }"
+          required
+        />
+        <div v-if="errors.lastname" class="error-message">
+          {{ errors.lastname }}
+        </div>
+
         <label for="email">Email</label>
-        <input type="email" id="email">
-        <label for="message">Messaggio</label>
-        <textarea name="message" id="message" cols="30" rows="10"></textarea>
-        <button type="submit"></button>
-    </form>
+        <input
+          v-model="formData.email"
+          type="email"
+          name="email"
+          :class="{ error: errors.email }"
+          required
+        />
+        <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
+
+        <label for="text">Messaggio</label>
+        <textarea
+          v-model="formData.text"
+          name="text"
+          id="text"
+          cols="30"
+          rows="20"
+          style="resize: none"
+          :class="{ error: errors.message }"
+        ></textarea>
+        <div v-if="errors.message" class="error-message">
+          {{ errors.message }}
+        </div>
+        <input
+          type="hidden"
+          v-model="formData.appartment_id"
+          name="appartment_id"
+        />
+        <button type="submit">Invia</button>
+      </form>
+    </div>
+  </div>
 </template>
 
-<style scoped lang="scss">
+<script>
+import axios from "axios";
 
+export default {
+  name: "AppMessage",
+  data() {
+    return {
+      appartment: {},
+      formData: {
+        name: "",
+        lastname: "",
+        email: "",
+        text: "",
+        appartment_id: null, // Aggiunto il campo per l'ID dell'appartamento
+      },
+      errors: {},
+    };
+  },
+
+  methods: {
+    // ... Altri metodi ...
+
+    fetchAppartment() {
+      const id = this.$route.params.id;
+
+      axios
+        .get(`http://127.0.0.1:8000/api/appartments/${id}`)
+        .then((response) => {
+          this.appartment = response.data;
+
+          // Assegna l'ID dell'appartamento al campo nascosto
+          this.formData.appartment_id = this.appartment.id;
+        });
+    },
+
+    handleSubmit() {
+      // Reset errors on each submit attempt
+      this.errors = {};
+
+      axios
+        .post("http://localhost:8000/api/messages", this.formData)
+        .then((response) => {
+          console.log(response.data);
+          // Puoi fare ulteriori azioni dopo l'invio dei dati
+        })
+        .catch((error) => {
+          if (error.response && error.response.data.errors) {
+            this.errors = error.response.data.errors;
+          } else {
+            console.error("Errore durante l'invio del messaggio:", error);
+          }
+        });
+    },
+  },
+  mounted() {
+    this.fetchAppartment();
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.card {
+  width: 50%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-top: 10px;
+}
+
+input,
+textarea {
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.error {
+  border-color: red;
+}
+
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
 </style>
