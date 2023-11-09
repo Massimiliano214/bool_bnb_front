@@ -42,9 +42,12 @@
         />
         <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
 
-        <label for="text">Messaggio</label>
+        <label for="text">Messaggio:</label>
+        <div class="text_num" :class="{ 'red-text': text_num < 5 || text_num > 3000 }">
+        Caratteri: {{ text_num }}
+      </div> 
         <textarea required  @keyup="checkText"
-          v-model="formData.text"
+          v-model="formData.text" @input="textCount"
           name="text"
           id="text"
           cols="30"
@@ -82,6 +85,8 @@ export default {
         lastname: "",
         email: "",
         text: "",
+        text_num: 0,
+
         appartment_id: null, // Aggiunto il campo per l'ID dell'appartamento
       },
       errors: {},
@@ -127,7 +132,13 @@ export default {
             text.classList.remove("invisible");
         } else {
         text.classList.add("invisible");
-    }
+
+        }
+      
+    },
+    textCount() {
+        this.text_num = this.formData.text.length; 
+        console.log( this.text_num);  
     }
   },
   mounted() {
@@ -196,5 +207,8 @@ button:hover {
 .error-message {
   color: red;
   margin-top: 5px;
+}
+.red-text {
+    color: red;
 }
 </style>
