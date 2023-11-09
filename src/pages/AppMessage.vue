@@ -43,11 +43,16 @@
         <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
 
         <label for="text">Messaggio:</label>
-        <div class="text_num" :class="{ 'red-text': text_num < 5 || text_num > 3000 }">
-        Caratteri: {{ text_num }}
-      </div> 
-        <textarea required  
-          v-model="formData.text" @input="textCount"
+        <div
+          class="text_num"
+          :class="{ 'red-text': text_num < 5 || text_num > 3000 }"
+        >
+          Caratteri: {{ text_num }}
+        </div>
+        <textarea
+          required
+          v-model="formData.text"
+          @input="textCount"
           name="text"
           id="text"
           cols="30"
@@ -55,8 +60,9 @@
           style="resize: none"
           :class="{ error: errors.message }"
         ></textarea>
-        <div id="my_text" class="invisible text-danger"><p>Il messaggio deve avere almeno 5 caratteri;</p>
-            <p>Il messaggio deve avere al massimo 3000 caratteri;</p>
+        <div id="my_text" class="invisible text-danger">
+          <p>Il messaggio deve avere almeno 5 caratteri;</p>
+          <p>Il messaggio deve avere al massimo 3000 caratteri;</p>
         </div>
         <div v-if="errors.message" class="error-message">
           {{ errors.message }}
@@ -67,7 +73,6 @@
           name="appartment_id"
         />
         <button @click="checkText" type="submit">Invia</button>
-
       </form>
     </div>
   </div>
@@ -88,14 +93,13 @@ export default {
         text: "",
         text_num: 0,
 
-        appartment_id: null, // Aggiunto il campo per l'ID dell'appartamento
+        appartment_id: null,
       },
       errors: {},
     };
   },
 
   methods: {
-
     fetchAppartment() {
       const id = this.$route.params.id;
 
@@ -104,22 +108,20 @@ export default {
         .then((response) => {
           this.appartment = response.data;
 
-          // Assegna l'ID dell'appartamento al campo nascosto
           this.formData.appartment_id = this.appartment.id;
         });
     },
 
     handleSubmit() {
-      // Reset errors on each submit attempt
       this.errors = {};
 
       axios
         .post("http://localhost:8000/api/messages", this.formData)
         .then((response) => {
           console.log(response.data);
-          this.$router.push({ name: 'home.show' });
+          this.$router.push({ name: "home.show" });
         })
-        
+
         .catch((error) => {
           if (error.response && error.response.data.errors) {
             this.errors = error.response.data.errors;
@@ -129,19 +131,17 @@ export default {
         });
     },
     checkText() {
-        const text = document.getElementById("my_text");
-        if (this.formData.text.length <= 5) {
-            text.classList.remove("invisible");
-        } else {
+      const text = document.getElementById("my_text");
+      if (this.formData.text.length <= 5) {
+        text.classList.remove("invisible");
+      } else {
         text.classList.add("invisible");
-
-        }
-      
+      }
     },
     textCount() {
-        this.text_num = this.formData.text.length; 
-        console.log( this.text_num);  
-    }
+      this.text_num = this.formData.text.length;
+      console.log(this.text_num);
+    },
   },
   mounted() {
     this.fetchAppartment();
@@ -154,7 +154,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   overflow-y: hidden;
 }
 
@@ -211,6 +211,6 @@ button:hover {
   margin-top: 5px;
 }
 .red-text {
-    color: red;
+  color: red;
 }
 </style>

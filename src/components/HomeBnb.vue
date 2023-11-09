@@ -32,7 +32,6 @@
             <div class="ml-3">
               <p><strong>Indirizzo:</strong> {{ appartment.address }}</p>
               <p><strong>Numero di Camere:</strong> {{ appartment.rooms }}</p>
-              <!-- Aggiungi altri dettagli del testo qui... -->
               <p><strong>Metri Quadri:</strong> {{ appartment.mq }}</p>
             </div>
           </div>
