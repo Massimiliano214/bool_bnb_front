@@ -46,7 +46,7 @@
         <div class="text_num" :class="{ 'red-text': text_num < 5 || text_num > 3000 }">
         Caratteri: {{ text_num }}
       </div> 
-        <textarea required  @keyup="checkText"
+        <textarea required  
           v-model="formData.text" @input="textCount"
           name="text"
           id="text"
@@ -66,7 +66,8 @@
           v-model="formData.appartment_id"
           name="appartment_id"
         />
-        <button type="submit">Invia</button>
+        <button @click="checkText" type="submit">Invia</button>
+
       </form>
     </div>
   </div>
@@ -116,8 +117,9 @@ export default {
         .post("http://localhost:8000/api/messages", this.formData)
         .then((response) => {
           console.log(response.data);
-          // Puoi fare ulteriori azioni dopo l'invio dei dati
+          this.$router.push({ name: 'home.show' });
         })
+        
         .catch((error) => {
           if (error.response && error.response.data.errors) {
             this.errors = error.response.data.errors;
