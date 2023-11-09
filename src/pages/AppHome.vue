@@ -9,6 +9,7 @@ export default {
 </script>
 <template>
   <h1>APPARTAMENTI SPONSORIZZATI</h1>
+  <button ><router-link :to="{ name: 'home.appartments' }">Ricerca avanzata</router-link> </button>
   <HomeBnb />
 </template>
 <style lang="scss"></style>

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import AppHome from "./pages/AppHome.vue";
 import AppShow from "./pages/AppShow.vue";
 import AppMessage from "./pages/AppMessage.vue";
+import AppList from "./pages/AppList.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -22,6 +23,12 @@ const router = createRouter({
       name: "home.message",
       component: AppMessage,
       props: true,
+    },
+    {
+      path: "/appartments",
+      name: "home.appartments",
+      component: AppList,
+      
     }
   ],
 });
