@@ -37,70 +37,7 @@
       @input="searchApartments"
     />
   </div>
-  <div class="col-md-6">
-    <div class="mb-3">
-      <label for="address" class="form-label"
-        ><strong
-          >Indirizzo<span class="text-danger">*</span><br /><span
-            style="font-size: 10px"
-            >Inizia a digitare l'indirizzo e poi
-            <strong>clicca sui suggerimenti</strong></span
-          ></strong
-        ></label
-      >
-      <input
-        @keyup="TomTomSearch()"
-        type="text"
-        name="address"
-        v-model="tomtomAddress"
-        id="address"
-        class="form-control @error('address') is-invalid @enderror editable-field edit_address"
-      />
-      <div id="address-suggestions"></div>
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="mb-3">
-        <label for="lat" class="form-label"
-          ><strong>Latitudine</strong><br /><span style="font-size: 10px"
-            ><strong
-              >Si autocompleta cliccando sui suggerimenti dell'indirizzo</strong
-            ></span
-          ></label
-        >
-        <input
-          type="text"
-          name="lat"
-          v-model="tomtomLat"
-          id="lat"
-          class="form-control @error('lat') is-invalid @enderror"
-          readonly
-        />
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="mb-3">
-        <label for="lon" class="form-label"
-          ><strong>Longitudine</strong><br /><span style="font-size: 10px"
-            ><strong
-              >Si autocompleta cliccando sui suggerimenti dell'indirizzo</strong
-            ></span
-          ></label
-        >
-        <input
-          type="text"
-          name="lon"
-          v-model="tomtomLon"
-          id="lon"
-          class="form-control @error('lon') is-invalid @enderror"
-          readonly
-        />
-      </div>
-    </div>
-  </div>
   <!-- RICERCA PER STANZE -->
   <div class="form-group mt-3">
     <label for="roomsSelect">Seleziona il numero di stanze:</label>
@@ -198,7 +135,19 @@
       }}</label>
     </div>
   </div>
+  <!-- RICERCA TOMTOM -->
+  <div class="form-group mt-3">
+    <label for="tomtomSearch">Ricerca TomTom:</label>
+    <input
+      type="text"
+      class="form-control"
+      id="tomtomSearch"
+      v-model="tomtomSearchTerm"
+      @input="searchTomTom"
+    />
+  </div>
 
+  <!-- RISULTATI DELLLA RICERCA -->
   <div class="container mt-5">
     <div class="row">
       <div
@@ -243,6 +192,7 @@
 
 <script>
 import axios from "axios";
+import _ from "lodash";
 
 export default {
   name: "AppList",
@@ -265,9 +215,7 @@ export default {
       uniqueBathrooms: [],
       selectedServices: [],
       services: [],
-      tomtomAddress: "",
-      tomtomLon: "",
-      tomtomLat: "",
+      tomtomSearchTerm: "",
     };
   },
   methods: {
@@ -369,92 +317,32 @@ export default {
       this.$router.push({ name: "home.show", params: { id, user_id: userId } });
     },
     // RICERCA TOMTOM
-    TomTomSearch() {
-      document.addEventListener("DOMContentLoaded", function () {
-        var timeoutId;
+    searchTomTom() {
+      if (this.tomtomSearchTerm.length >= 2) {
+        const apiKey = "heZUtTWgjCO3ulbu2i56aVDmhQL9VXBJ";
+        const baseUrl = "https://api.tomtom.com/search/2/geocode";
 
-        var addressInput = document.getElementById("address");
-        var latInput = document.getElementById("lat");
-        var lonInput = document.getElementById("lon");
-        var addressSuggestions = document.getElementById("address-suggestions");
+        const searchUrl = `${baseUrl}/${this.tomtomSearchTerm}.json?key=${apiKey}`;
+        console.log(searchUrl, this.tomtomSearchTerm);
 
-        function updateCoordinates(lat, lon, address) {
-          this.tomtomLon = lat;
-          this.tomtomLat = lon;
-          addressInput.value = address;
-        }
+        // Cancella eventuali timer precedentemente impostati
+        clearTimeout(this.tomtomTimer);
 
-        addressInput.addEventListener("keyup", function () {
-          addressInput = tomtomAddress.trim();
-
-          // Cancella timer precedente
-          clearTimeout(timeoutId);
-
-          // Imposta un nuovo timer
-          timeoutId = setTimeout(function () {
-            if (addressInput.length > 2) {
-              // Chiamata al controller per ottenere i suggerimenti
-              fetch("/tomtom/getGeoData/" + addressInput)
-                .then((response) => response.json())
-                .then((data) => {
-                  console.log(data);
-                  var suggestions = "";
-                  data.forEach(function (result) {
-                    suggestions +=
-                      '<div class="suggestion" data-lat="' +
-                      result.position.lat +
-                      '" data-lon="' +
-                      result.position.lon +
-                      '">' +
-                      result.address.freeformAddress +
-                      "</div>";
-                    console.log(data);
-                  });
-                  addressSuggestions.innerHTML = suggestions;
-
-                  // Verifica e aggiorna le coordinate solo se corrispondono con l'indirizzo
-                  if (
-                    data.length > 0 &&
-                    data[0].address.freeformAddress === addressInput
-                  ) {
-                    updateCoordinates(
-                      data[0].position.lat,
-                      data[0].position.lon,
-                      addressInput
-                    );
-                  } else {
-                    // Svuota i campi di latitudine e longitudine se non corrispondono con l'indirizzo
-                    this.tomtomLon = "";
-                    this.tomtomLat = "";
-                  }
-                })
-                .catch((error) => {
-                  console.error("Errore nel recupero dei suggerimenti:", error);
-                  // Svuota i campi di latitudine e longitudine in caso di errore
-                  this.tomtomLon = "";
-                  this.tomtomLat = "";
-                });
-            } else {
-              addressSuggestions.innerHTML = "";
-              // Svuota i campi di latitudine e longitudine se l'indirizzo è vuoto
-              this.tomtomLon = "";
-              this.tomtomLat = "";
-            }
-          }, 500);
-        });
-
-        // Gestione dei clic sui suggerimenti
-        addressSuggestions.addEventListener("click", function (event) {
-          if (event.target.classList.contains("suggestion")) {
-            var lat = event.target.getAttribute("data-lat");
-            var lon = event.target.getAttribute("data-lon");
-            updateCoordinates(lat, lon, event.target.textContent);
-            addressSuggestions.innerHTML = "";
-          }
-        });
-      });
+        // Utilizza setTimeout per aggiungere un ritardo di 500ms
+        this.tomtomTimer = setTimeout(() => {
+          axios
+            .get(searchUrl)
+            .then((response) => {
+              console.log(response.data);
+            })
+            .catch((error) => {
+              console.error("Errore nella chiamata API TomTom", error);
+            });
+        }, 500);
+      }
     },
   },
+
   computed: {
     sortedUniqueRooms() {
       const filteredRooms = this.uniqueRooms.filter((room) => room !== 0);
