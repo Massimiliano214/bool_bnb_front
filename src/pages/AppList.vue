@@ -37,6 +37,43 @@
       @input="searchApartments"
     />
   </div>
+  <div class="col-md-6">
+      <div class="mb-3">
+          <label for="address" class="form-label"><strong>Indirizzo<span
+                      class="text-danger">*</span><br><span style="font-size: 10px">Inizia a digitare
+                      l'indirizzo e poi <strong>clicca sui
+                          suggerimenti</strong></span></strong></label>
+          <input type="text" name="address" id="address" value="{{ $appartment->address }}"
+              class="form-control @error('address') is-invalid @enderror editable-field edit_address">
+          <div id="address-suggestions"></div>
+          
+      </div>
+  </div>
+
+
+  <div class="row">
+  <div class="col-md-6">
+      <div class="mb-3">
+          <label for="lat" class="form-label"><strong>Latitudine</strong><br><span
+                  style="font-size: 10px"><strong>Si autocompleta cliccando sui suggerimenti
+                      dell'indirizzo</strong></span></label>
+          <input type="text" name="lat" id="lat" value="{{ $appartment->lat }}"
+              class="form-control @error('lat') is-invalid @enderror" readonly>
+          
+      </div>
+  </div>
+
+  <div class="col-md-6">
+      <div class="mb-3">
+          <label for="lon" class="form-label"><strong>Longitudine</strong><br><span
+                  style="font-size: 10px"><strong>Si autocompleta cliccando sui suggerimenti
+                      dell'indirizzo</strong></span></label>
+          <input type="text" name="lon" id="lon" value="{{ $appartment->lon }}"
+              class="form-control @error('lon') is-invalid @enderror " readonly>
+          
+      </div>
+  </div>
+</div>
   <!-- RICERCA PER STANZE -->
   <div class="form-group mt-3">
     <label for="roomsSelect">Seleziona il numero di stanze:</label>
@@ -301,6 +338,93 @@ export default {
     goToShowPage(id, userId) {
       this.$router.push({ name: "home.show", params: { id, user_id: userId } });
     },
+    TomTomSearch() {
+      document.addEventListener("DOMContentLoaded", function () {
+    var timeoutId;
+
+    var addressInput = document.getElementById("address");
+    var latInput = document.getElementById("lat");
+    var lonInput = document.getElementById("lon");
+    var addressSuggestions = document.getElementById("address-suggestions");
+
+    function updateCoordinates(lat, lon, address) {
+        latInput.value = lat;
+        lonInput.value = lon;
+        addressInput.value = address;
+    }
+
+    addressInput.addEventListener("input", function () {
+        var inputAddress = this.value.trim();
+
+        // Cancella timer precedente
+        clearTimeout(timeoutId);
+
+        // Imposta un nuovo timer
+        timeoutId = setTimeout(function () {
+            if (inputAddress.length > 2) {
+                // Chiamata al controller per ottenere i suggerimenti
+                fetch("/tomtom/getGeoData/" + inputAddress)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data);
+                        var suggestions = "";
+                        data.forEach(function (result) {
+                            suggestions +=
+                                '<div class="suggestion" data-lat="' +
+                                result.position.lat +
+                                '" data-lon="' +
+                                result.position.lon +
+                                '">' +
+                                result.address.freeformAddress +
+                                "</div>";
+                        });
+                        addressSuggestions.innerHTML = suggestions;
+
+                        // Verifica e aggiorna le coordinate solo se corrispondono con l'indirizzo
+                        if (
+                            data.length > 0 &&
+                            data[0].address.freeformAddress === inputAddress
+                        ) {
+                            updateCoordinates(
+                                data[0].position.lat,
+                                data[0].position.lon,
+                                inputAddress
+                            );
+                        } else {
+                            // Svuota i campi di latitudine e longitudine se non corrispondono con l'indirizzo
+                            latInput.value = "";
+                            lonInput.value = "";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Errore nel recupero dei suggerimenti:",
+                            error
+                        );
+                        // Svuota i campi di latitudine e longitudine in caso di errore
+                        latInput.value = "";
+                        lonInput.value = "";
+                    });
+            } else {
+                addressSuggestions.innerHTML = "";
+                // Svuota i campi di latitudine e longitudine se l'indirizzo è vuoto
+                latInput.value = "";
+                lonInput.value = "";
+            }
+        }, 500);
+    });
+
+    // Gestione dei clic sui suggerimenti
+    addressSuggestions.addEventListener("click", function (event) {
+        if (event.target.classList.contains("suggestion")) {
+            var lat = event.target.getAttribute("data-lat");
+            var lon = event.target.getAttribute("data-lon");
+            updateCoordinates(lat, lon, event.target.textContent);
+            addressSuggestions.innerHTML = "";
+        }
+    });
+});
+    }
   },
   computed: {
     sortedUniqueRooms() {
