@@ -369,7 +369,7 @@ export default {
     },
 
     selectSuggestion(suggestion) {
-      this.tomtomSearchTerm = "";
+      this.tomtomSearchTerm = suggestion.address.freeformAddress;
       this.showSuggestions = false;
     },
   },
