@@ -140,7 +140,7 @@
     </div>
   </div>
   <!-- RICERCA TOMTOM -->
-  <div class="form-group mt-3">
+  <div class="form-group mt-3 position-relative">
     <label for="tomtomSearch">Ricerca TomTom:</label>
     <input
       type="text"
@@ -149,6 +149,16 @@
       v-model="tomtomSearchTerm"
       @input="searchTomTom"
     />
+    <!-- SUGGERIMENTI TOMTOM-->
+    <ul v-if="showSuggestions" class="suggestions">
+      <li
+        v-for="(suggestion, index) in tomtomSuggestions"
+        :key="index"
+        @click="selectSuggestion(suggestion)"
+      >
+        {{ suggestion.address.freeformAddress }}
+      </li>
+    </ul>
   </div>
 
   <!-- RISULTATI DELLLA RICERCA -->
@@ -221,6 +231,7 @@ export default {
       services: [],
       tomtomSearchTerm: "",
       tomtomSuggestions: [],
+      showSuggestions: false,
     };
   },
   methods: {
@@ -331,10 +342,8 @@ export default {
 
         const searchUrl = `${baseUrl}/${this.tomtomSearchTerm}.json?key=${apiKey}`;
 
-        // Cancella eventuali timer precedentemente impostati
         clearTimeout(this.tomtomTimer);
 
-        // Utilizza setTimeout per aggiungere un ritardo di 500ms
         this.tomtomTimer = setTimeout(() => {
           axios
             .get(searchUrl, {
@@ -347,23 +356,21 @@ export default {
             })
             .then((response) => {
               this.tomtomSuggestions = response.data.results;
+              this.showSuggestions = true;
             })
             .catch((error) => {
               console.error("Errore nella chiamata API TomTom", error);
             });
         }, 500);
       } else {
-        // Se la lunghezza del termine di ricerca è inferiore a 2, svuota gli suggerimenti
         this.tomtomSuggestions = [];
+        this.showSuggestions = false;
       }
     },
-  },
-  watch: {
-    tomtomSuggestions() {
-      if (this.tomtomSuggestions.length > 0) {
-        this.tomtomSearchTerm =
-          this.tomtomSuggestions[0].address.freeformAddress;
-      }
+
+    selectSuggestion(suggestion) {
+      this.tomtomSearchTerm = "";
+      this.showSuggestions = false;
     },
   },
 
@@ -401,5 +408,29 @@ export default {
 .scb-switch {
   width: 3rem;
   height: 1.5rem;
+}
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  max-height: 150px;
+  overflow-y: auto;
+
+  li {
+    padding: 8px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
 }
 </style>
