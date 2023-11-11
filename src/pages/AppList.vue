@@ -50,6 +50,24 @@
       </li>
     </ul>
   </div>
+  <!-- RAGGIO DI RICERCA -->
+  <div class="mt-3">
+    <label for="radiusSelect">Seleziona il raggio di ricerca:</label>
+    <select
+      id="radiusSelect"
+      class="form-select"
+      v-model="selectedRadius"
+      @change="searchApartments"
+    >
+      <option value="0">0 Km</option>
+      <option value="5">5 Km</option>
+      <option value="10">10 Km</option>
+      <option value="15">15 Km</option>
+      <option value="20">20 Km</option>
+      <option value="25">25 Km</option>
+      <option value="30">30 Km</option>
+    </select>
+  </div>
 
   <!-- RICERCA PER STANZE -->
   <div class="form-group mt-3">
@@ -363,6 +381,7 @@ export default {
       } else {
         this.tomtomSuggestions = [];
         this.showSuggestions = false;
+        this.searchApartments();
       }
     },
     handleDocumentClick(event) {
