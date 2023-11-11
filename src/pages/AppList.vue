@@ -1,7 +1,7 @@
 <template>
   <h1>RICERCA AVANZATA</h1>
   <!-- SWITCH RICERCA AVANZATA -->
-  <span>solo sponsorizzati </span>
+  <span class="text-uppercase fw-bold">Solo appartamenti sponsorizzati </span>
   <div class="form-check form-switch d-inline-block">
     <input
       class="form-check-input scb-switch"
@@ -11,7 +11,10 @@
       v-model="showAllApartments"
       @change="fetchAppartments"
     />
-    <label class="form-check-label" for="flexSwitchCheckDefault">
+    <label
+      class="form-check-label text-uppercase fw-bold"
+      for="flexSwitchCheckDefault"
+    >
       Tutti gli appartamenti</label
     >
   </div>
@@ -53,10 +56,11 @@
         :value="room"
         v-if="room !== 0"
       >
-        {{ room }} stanze
+        {{ room }}
       </option>
     </select>
   </div>
+
   <!-- RICERCA PER METRI QUADRI -->
   <div class="form-group mt-3">
     <label for="mqSelect">Seleziona i metri quadri:</label>
@@ -206,7 +210,7 @@ export default {
       showAllApartments: true,
       searchNameAppartment: "",
       searchAddress: "",
-      searchRooms: "",
+      searchRooms: 0,
       uniqueRooms: [],
       searchMq: "",
       searchBeds: "",
@@ -216,6 +220,7 @@ export default {
       selectedServices: [],
       services: [],
       tomtomSearchTerm: "",
+      tomtomSuggestions: [],
     };
   },
   methods: {
@@ -241,7 +246,9 @@ export default {
           appartment.services.map((service) => service.name)
         );
       }, []);
+
       this.services = Array.from(new Set(allServices));
+      this.services.sort(); // Aggiungi questa linea per ordinare alfabeticamente i servizi
     },
 
     getUniqueBathrooms() {
@@ -323,7 +330,6 @@ export default {
         const baseUrl = "https://api.tomtom.com/search/2/geocode";
 
         const searchUrl = `${baseUrl}/${this.tomtomSearchTerm}.json?key=${apiKey}`;
-        console.log(searchUrl, this.tomtomSearchTerm);
 
         // Cancella eventuali timer precedentemente impostati
         clearTimeout(this.tomtomTimer);
@@ -331,14 +337,32 @@ export default {
         // Utilizza setTimeout per aggiungere un ritardo di 500ms
         this.tomtomTimer = setTimeout(() => {
           axios
-            .get(searchUrl)
+            .get(searchUrl, {
+              params: {
+                storeResult: false,
+                limit: 5,
+                countrySet: "it",
+                key: apiKey,
+              },
+            })
             .then((response) => {
-              console.log(response.data);
+              this.tomtomSuggestions = response.data.results;
             })
             .catch((error) => {
               console.error("Errore nella chiamata API TomTom", error);
             });
         }, 500);
+      } else {
+        // Se la lunghezza del termine di ricerca è inferiore a 2, svuota gli suggerimenti
+        this.tomtomSuggestions = [];
+      }
+    },
+  },
+  watch: {
+    tomtomSuggestions() {
+      if (this.tomtomSuggestions.length > 0) {
+        this.tomtomSearchTerm =
+          this.tomtomSuggestions[0].address.freeformAddress;
       }
     },
   },
