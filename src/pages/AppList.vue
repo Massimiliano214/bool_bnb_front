@@ -29,16 +29,26 @@
       @input="searchApartments"
     />
   </div>
-  <!-- RICERCA PER INDIRIZZO -->
-  <div class="form-group mt-3">
-    <label for="addressInput">Ricerca per indirizzo:</label>
+  <!-- RICERCA TOMTOM -->
+  <div class="form-group mt-3 position-relative">
+    <label for="tomtomSearch">Ricerca TomTom:</label>
     <input
       type="text"
       class="form-control"
-      id="addressInput"
-      v-model="searchAddress"
-      @input="searchApartments"
+      id="tomtomSearch"
+      v-model="tomtomSearchTerm"
+      @input="searchTomTom"
     />
+    <!-- SUGGERIMENTI TOMTOM-->
+    <ul v-if="showSuggestions" class="suggestions">
+      <li
+        v-for="(suggestion, index) in tomtomSuggestions"
+        :key="index"
+        @click="selectSuggestion(suggestion)"
+      >
+        {{ suggestion.address.freeformAddress }}
+      </li>
+    </ul>
   </div>
 
   <!-- RICERCA PER STANZE -->
@@ -139,27 +149,6 @@
       }}</label>
     </div>
   </div>
-  <!-- RICERCA TOMTOM -->
-  <div class="form-group mt-3 position-relative">
-    <label for="tomtomSearch">Ricerca TomTom:</label>
-    <input
-      type="text"
-      class="form-control"
-      id="tomtomSearch"
-      v-model="tomtomSearchTerm"
-      @input="searchTomTom"
-    />
-    <!-- SUGGERIMENTI TOMTOM-->
-    <ul v-if="showSuggestions" class="suggestions">
-      <li
-        v-for="(suggestion, index) in tomtomSuggestions"
-        :key="index"
-        @click="selectSuggestion(suggestion)"
-      >
-        {{ suggestion.address.freeformAddress }}
-      </li>
-    </ul>
-  </div>
 
   <!-- RISULTATI DELLLA RICERCA -->
   <div class="container mt-5">
@@ -194,7 +183,6 @@
             </div>
             <div class="ml-3">
               <p><strong>Indirizzo:</strong> {{ appartment.address }}</p>
-              <!-- <p><strong>Numero di Camere:</strong> {{ appartment.rooms }}</p> -->
               <p><strong>Metri Quadri:</strong> {{ appartment.mq }}</p>
             </div>
           </div>
@@ -259,7 +247,7 @@ export default {
       }, []);
 
       this.services = Array.from(new Set(allServices));
-      this.services.sort(); // Aggiungi questa linea per ordinare alfabeticamente i servizi
+      this.services.sort();
     },
 
     getUniqueBathrooms() {
@@ -290,12 +278,6 @@ export default {
             .toLowerCase()
             .includes(this.searchNameAppartment.toLowerCase());
 
-        const addressMatch =
-          !this.searchAddress ||
-          appartment.address
-            .toLowerCase()
-            .includes(this.searchAddress.toLowerCase());
-
         const roomsMatch =
           !this.searchRooms || appartment.rooms >= this.searchRooms;
 
@@ -312,17 +294,24 @@ export default {
           this.selectedServices.length === 0 ||
           this.checkServices(appartment.services);
 
+        const addressMatch =
+          !this.tomtomSearchTerm ||
+          appartment.address
+            .toLowerCase()
+            .includes(this.tomtomSearchTerm.toLowerCase());
+
         return (
           nameMatch &&
-          addressMatch &&
           roomsMatch &&
           mqMatch &&
           bedsMatch &&
           bathroomsMatch &&
-          servicesMatch
+          servicesMatch &&
+          addressMatch
         );
       });
     },
+
     checkServices(appartmentServices) {
       return this.selectedServices.every((selectedService) =>
         appartmentServices.some(
@@ -335,6 +324,7 @@ export default {
       this.$router.push({ name: "home.show", params: { id, user_id: userId } });
     },
     // RICERCA TOMTOM
+
     searchTomTom() {
       if (this.tomtomSearchTerm.length >= 2) {
         const apiKey = "heZUtTWgjCO3ulbu2i56aVDmhQL9VXBJ";
@@ -357,14 +347,30 @@ export default {
             .then((response) => {
               this.tomtomSuggestions = response.data.results;
               this.showSuggestions = true;
+
+              setTimeout(() => {
+                this.showSuggestions = false;
+              }, 10000);
+
+              this.searchApartments();
             })
             .catch((error) => {
               console.error("Errore nella chiamata API TomTom", error);
             });
         }, 500);
+
+        document.addEventListener("click", this.handleDocumentClick);
       } else {
         this.tomtomSuggestions = [];
         this.showSuggestions = false;
+      }
+    },
+    handleDocumentClick(event) {
+      const isOutsideSuggestions = !event.target.closest("#areaSuggerimenti");
+
+      if (isOutsideSuggestions) {
+        this.showSuggestions = false;
+        document.removeEventListener("click", this.handleDocumentClick);
       }
     },
 
